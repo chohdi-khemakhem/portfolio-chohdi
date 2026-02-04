@@ -27,12 +27,18 @@ Thumbs.db
 .idea/
 
 # ============================
-# Large media files (do NOT push)
+# Large media files
 # ============================
+# Ignore all videos EXCEPT demos tracked by Git LFS
 *.mp4
 *.mov
 *.avi
 *.mkv
+
+!assets/**/cci_demo.mp4
+!assets/**/creditTic_demo.mp4
+!assets/**/sm_demo.mp4
+
 
 # ============================
 # Logs & temp files
