@@ -203,6 +203,53 @@ st.markdown(
 st.markdown(
     """
 <style>
+.nav-card{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.nav-card:hover{
+  background: rgba(255,255,255,0.08);
+}
+
+.nav-active{
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.25);
+}
+.link-card{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+}
+.link-card:hover{
+  background: rgba(255,255,255,0.08);
+}
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+
+st.markdown(
+    """
+<style>
 .profile-photo-wrapper{
   display: flex;
   justify-content: center;
@@ -316,45 +363,102 @@ with st.sidebar:
 """,
             unsafe_allow_html=True,
         )
+        st.markdown(
+    """
+<style>
+/* Sidebar radio -> modern nav */
+section[data-testid="stSidebar"] div[role="radiogroup"]{
+  gap: 10px;
+}
+
+section[data-testid="stSidebar"] div[role="radiogroup"] > label{
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  transition: all 0.15s ease;
+}
+
+/* remove default circle spacing */
+section[data-testid="stSidebar"] div[role="radiogroup"] > label > div{
+  gap: 10px;
+}
+
+/* text style */
+section[data-testid="stSidebar"] div[role="radiogroup"] > label p{
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  margin: 0 !important;
+}
+
+/* hover */
+section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover{
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* selected state */
+section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked){
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.28);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* hide the native radio dot */
+section[data-testid="stSidebar"] div[role="radiogroup"] input{
+  display: none;
+}
+</style>
+""",
+    unsafe_allow_html=True,
+)
+    
+
     except Exception as e:
         st.error(str(e))
         st.caption("Vérifie le nom exact du fichier : assets/profile.jpg (ou profile.png).")
 
+    with st.sidebar:
+      st.markdown("### Navigation")
 
-    section = st.radio(
-        "Section",
-        ["Accueil", "Projets", "Cas pratique", "Compétences", "Contact"],
-        label_visibility="collapsed",
-    )
+      section = st.radio(
+          "",
+          ["Accueil", "Projets", "Cas pratique", "Compétences", "Contact"],
+          label_visibility="collapsed",
+      )
+    
+              
 
+          
+          
+          
+          
+
+    
     st.markdown(
         """
 <div class="sidebar-card">
   <div class="sidebar-role">Liens</div>
   <div class="sidebar-divider"></div>
-  <div class="sidebar-links">
-    <div class="sidebar-link">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2"/>
-        <path d="M8 11v5" stroke="currentColor" stroke-width="2"/>
-        <path d="M8 8v.5" stroke="currentColor" stroke-width="2"/>
-        <path d="M12 11v5" stroke="currentColor" stroke-width="2"/>
-        <path d="M12 11c0-1.2 1-2.2 2.2-2.2S16.4 9.8 16.4 11v5" stroke="currentColor" stroke-width="2"/>
-      </svg>
-      <span>LinkedIn</span>
-    </div>
-  </div>
+
+  <a class="link-card" href="https://www.linkedin.com/in/chohdi-khemakhem-a36449279/" target="_blank">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2"/>
+      <path d="M8 11v5" stroke="currentColor" stroke-width="2"/>
+      <path d="M8 8v.5" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 11v5" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 11c0-1.2 1-2.2 2.2-2.2S16.4 9.8 16.4 11v5" stroke="currentColor" stroke-width="2"/>
+    </svg>
+    LinkedIn
+  </a>
 </div>
 """,
         unsafe_allow_html=True,
     )
 
-    st.link_button(
-        "Ouvrir LinkedIn",
-        "https://www.linkedin.com/in/chohdi-khemakhem-a36449279/",
-        use_container_width=True,
-    )
-
+    # --- Documents ---
     st.markdown(
         """
 <div class="sidebar-card">
@@ -365,9 +469,16 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    render_download_cv()
-
-
+    if exists(CV_PATH):
+        with open(CV_PATH, "rb") as f:
+            st.download_button(
+                "CV_Chohdi_Khemakhem.pdf",
+                data=f,
+                file_name="CV_Chohdi_Khemakhem.pdf",
+                mime="application/pdf",
+            )
+    else:
+        st.caption("CV introuvable : assets/cv/CV_Chohdi_Khemakhem.pdf")
 
 # ============================
 # ACCUEIL
@@ -549,7 +660,7 @@ if section == "Accueil":
 if section == "Projets":
     st.markdown("## Projets")
 
-    tabs = st.tabs(["CréditTic", "Centrale des Chèques Impayés", "Salle de Marché"])
+    tabs = st.tabs(["CréditTic", "Salle de Marché", "Centrale des Chèques Impayés"])
 
     # ---- CréditTic ----
     with tabs[0]:
@@ -592,7 +703,7 @@ if section == "Projets":
         render_gallery(credit_imgs, per_row=3, limit=18)
 
     # ---- CCI ----
-    with tabs[1]:
+    with tabs[2]:
         st.markdown("""
 <div class="card">
 
@@ -615,11 +726,12 @@ if section == "Projets":
         else:
             st.caption("Ajoute assets/salle_marche/sm_demo.mp4 (optionnel).")
         st.write("")
+        st.markdown("### Captures d'écran")
         cci_imgs = collect_images(CCI_DIR, prefixes=["cci_", "CentraledesChequesImpayes", "CentraledesChèquesImpayés"])
         render_gallery(cci_imgs, per_row=3, limit=18)
 
     # ---- Salle de Marché ----
-    with tabs[2]:
+    with tabs[1]:
         st.markdown("""
 <div class="card">
 
