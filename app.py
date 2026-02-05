@@ -311,7 +311,7 @@ with st.sidebar:
   <img src="data:{mime};base64,{img_base64}" class="profile-photo"/>
   <div class="sidebar-name">Chohdi Khemakhem</div>
   <div class="sidebar-role">Ingénieur en Informatique Financière</div>
-  <div class="sidebar-role">FinTech • Banking Applications • Risk</div>
+  <div class="sidebar-role">FinTech • Systèmes Bancaires • Risque & Conformité</div>
 </div>
 """,
             unsafe_allow_html=True,
@@ -323,7 +323,7 @@ with st.sidebar:
 
     section = st.radio(
         "Section",
-        ["Accueil", "Projets", "Démonstration", "Compétences", "Contact"],
+        ["Accueil", "Projets", "Cas pratique", "Compétences", "Contact"],
         label_visibility="collapsed",
     )
 
@@ -422,24 +422,24 @@ if section == "Accueil":
     st.markdown("""
 <div class="hero">
 
-<div class="badges">
-<span>FinTech</span>
-<span>Banking Apps</span>
-<span>Risk & Collateral</span>
-</div>
+  <div class="badges">
+    <span>FinTech</span>
+    <span>Applications Bancaires</span>
+    <span>Risque & Garanties</span>
+  </div>
 
-<div class="hero-name">Chohdi Khemakhem</div>
+  <div class="hero-name">Chohdi Khemakhem</div>
 
-<div class="hero-subtitle">
-Ingénieur en Informatique Financière —
-Java / Spring Boot • Angular • Python • KPI & Dashboards
-</div>
+  <div class="hero-subtitle">
+    Ingénieur en Informatique Financière —
+    Java / Spring Boot • Angular • Python • KPIs & Tableaux de bord
+  </div>
 
-<div class="hero-desc">
-Je conçois des applications bancaires sécurisées et orientées métier
-(crédit, garanties, suivi post-attribution),
-avec une approche product & risk-aware.
-</div>
+  <div class="hero-desc">
+    Je conçois des applications bancaires sécurisées et orientées métier
+    (crédit, gestion des garanties, suivi post-attribution),
+    avec une approche centrée produit, risque et performance opérationnelle.
+  </div>
 
 </div>
 """, unsafe_allow_html=True)
@@ -651,8 +651,8 @@ if section == "Projets":
 # ============================
 # DEMONSTRATION (loan_engine.py)
 # ============================
-if section == "Démonstration":
-    st.markdown("## Démonstration — Moteur d'échéancier de crédit")
+if section == "Cas pratique":
+    st.markdown("## Cas pratique — Moteur d'échéancier de crédit")
     st.markdown("""
 <style>
 .card {
