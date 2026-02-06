@@ -774,15 +774,19 @@ if section == "Projets":
         st.markdown(
             """
     <div class="card">
-    <h3>Mise en place d’une Chaîne DevOps CI/CD et de Supervision pour une Architecture Microservices</h3>
-    <ul>
-      <li><b>CI/CD :</b> Jenkins (tests, build, déploiement automatisé)</li>
-      <li><b>Qualité :</b> SonarQube (analyse statique, quality gates)</li>
-      <li><b>Monitoring :</b> Prometheus + Grafana (métriques, dashboards, santé des services)</li>
-      <li><b>Conteneurisation :</b> Docker (backend, frontend, base de données)</li>
-      <li><b>Base de données :</b> MySQL conteneurisé</li>
-    </ul>
-    </div>
+
+<h3>Mise en place d’une Chaîne DevOps CI/CD et de Supervision pour une Architecture Microservices</h3>
+
+<ul>
+  <li><b>Objectif :</b> industrialiser le cycle de livraison (build, tests, déploiement) et assurer une supervision complète (métriques, alerting, dashboards).</li>
+  <li><b>Conteneurisation :</b> packaging et exécution des services <b>backend</b> et <b>frontend</b> via <b>Docker</b> (gestion des dépendances et environnements reproductibles).</li>
+  <li><b>CI/CD :</b> pipeline automatisé avec <b>Jenkins</b> (tests, build, déploiement) afin de fiabiliser et accélérer la mise en production.</li>
+  <li><b>Qualité & sécurité :</b> intégration de <b>SonarQube</b> pour les contrôles de qualité, l’analyse statique et les <b>quality gates</b>.</li>
+  <li><b>Observabilité :</b> collecte de métriques avec <b>Prometheus</b> et visualisation via <b>Grafana</b> (dashboards de disponibilité, CPU/RAM, latence, erreurs, santé des services).</li>
+  <li><b>Base de données :</b> <b>MySQL</b> conteneurisé pour simplifier la connectivité backend et la gestion des données.</li>
+</ul>
+
+</div>
     """,
             unsafe_allow_html=True,
         )
