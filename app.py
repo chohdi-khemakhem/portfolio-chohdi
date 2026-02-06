@@ -670,14 +670,24 @@ if section == "Projets":
 <h3>CréditTic — Digitalisation du cycle complet de crédit</h3>
 
 <ul>
-<li>Architecture n-tiers : <b>Spring Boot</b> • <b>Angular</b> • <b>PostgreSQL</b></li>
-<li>Authentification : <b>Keycloak</b> (SSO / MFA)</li>
-<li>Modules : simulation de prêt (<b>LTV</b>, <b>DTI</b>, annuités), gestion des garanties, génération de documents, dashboards</li>
-<li>Objectif : réduire les délais de traitement, améliorer la traçabilité et l’expérience client</li>
+  <li>Architecture n-tiers : <b>Spring Boot</b> • <b>Angular</b> • <b>PostgreSQL</b></li>
+  <li>Authentification : <b>Keycloak</b> (SSO / MFA)</li>
+  <li>Modules : simulation de prêt (<b>LTV</b>, <b>DTI</b>, annuités), gestion des garanties, génération de documents, dashboards</li>
+
+  <li><b>IA intégrée (LLM)</b> : utilisation de <b>Llama 3 8B</b> via <b>LM Studio</b> pour assister les processus de crédit :</li>
+  <ul>
+    <li>Génération d’une <b>offre de crédit</b> (résumé + proposition) à partir des données client</li>
+    <li><b>Optimisation / recommandation</b> de garanties selon le profil et les règles métier</li>
+    <li><b>Remplissage automatique</b> de champs (pré-saisie) à partir d’un paragraphe descriptif fourni par l’agent</li>
+    <li>Support à la <b>simulation</b> et explication des résultats (LTV/DTI/échéancier) en langage naturel</li>
+  </ul>
+
+  <li>Objectif : réduire les délais de traitement, améliorer la traçabilité et l’expérience client</li>
 </ul>
 
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
@@ -695,6 +705,7 @@ if section == "Projets":
         if arch:
             st.write("")
             st.markdown("### Architecture")
+            st.markdown("""CréditTic est une plateforme de digitalisation du crédit conçue pour automatiser et sécuriser l’ensemble du cycle de traitement des demandes. Elle combine une architecture web n-tiers moderne, des services bancaires robustes et des capacités d’intelligence artificielle afin d’améliorer la simulation des prêts, l’optimisation des garanties et la génération des offres de crédit, tout en respectant les exigences de sécurité et de conformité du secteur bancaire.""")
             st.image(str(arch), width="stretch")
 
         st.write("")
