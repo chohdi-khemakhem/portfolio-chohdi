@@ -9,10 +9,12 @@ from loan_engine import (
     build_schedule,
     TYPE_IN_FINE,
     TYPE_CONSTANT_AMORTIZATION,
-    TYPE_SPECIFIC_REPAYMENT,
+    TYPE_ANNUITY,
     BASE_360,
     BASE_MENSUELLE_12,
 )
+
+
 
 # ============================
 # CONFIG
@@ -623,19 +625,30 @@ if section == "Accueil":
     # Main content
     left, right = st.columns([1.2, 0.8], gap="large")
 
+   
     with left:
-        st.subheader("🎯 Résumé")
-        st.write(
-            "Ingénieur FinTech avec expérience pratique sur des plateformes bancaires : "
-            "digitalisation du cycle de crédit, calculs financiers (LTV, DTI, annuités), "
-            "gestion des garanties/collatéraux, dashboards, génération de documents et sécurité."
+        st.subheader("🎯Résumé")
+        st.markdown(
+            """
+    **Ingénieur FinTech** avec une expérience pratique sur des **plateformes bancaires**, 
+    incluant la **digitalisation du cycle de crédit**, les **calculs financiers** 
+    (**LTV**, **DTI**, **annuités**), la **gestion des garanties / collatéraux**, 
+    les **dashboards décisionnels**, la **génération de documents** et les **aspects de sécurité**.
+            """
         )
 
-        st.subheader("✅ Contenu du portfolio")
-        st.write(
-            "- Projets bancaires : CréditTic, Centrale des Chèques Impayés, Salle de Marché (captures et démonstrations).\n"
-            "- Démo technique : moteur d’échéancier de crédit (plusieurs modes de remboursement) avec export des résultats.\n"
-            "- Synthèse compétences : développement, sécurité, KPIs et logique métier bancaire."
+        st.subheader("✅Contenu du portfolio")
+        st.markdown(
+            """
+    - **Projets bancaires** : **CréditTic**, **Centrale des Chèques Impayés**, **Salle de Marché**  
+      *(captures d’écran et démonstrations fonctionnelles)*
+
+    - **Démo technique** : **moteur d’échéancier de crédit**  
+      *(plusieurs modes de remboursement, calculs détaillés, export des résultats)*
+
+    - **Synthèse des compétences** : **développement applicatif**, **sécurité**,  
+      **KPIs & dashboards**, **logique métier bancaire**
+            """
         )
 
 
@@ -817,12 +830,15 @@ if section == "Projets":
 
 
 
+
 # ============================
 # DEMONSTRATION (loan_engine.py)
 # ============================
 if section == "Cas pratique":
     st.markdown("## Cas pratique — Moteur d'échéancier de crédit")
-    st.markdown("""
+
+    st.markdown(
+        """
 <style>
 .card {
     background-color: #ffffff;
@@ -832,82 +848,94 @@ if section == "Cas pratique":
     margin-top: 20px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.05);
 }
-
 .small {
     font-size: 15px;
     color: #374151;
     line-height: 1.6;
 }
 </style>
-""", unsafe_allow_html=True)
+""",
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("""
+    st.markdown(
+        """
 <div class="card">
   <div class="small">
     Démonstration interactive d’un moteur de calcul d’échéancier
     supportant plusieurs modes de remboursement, la sélection
-    de la base de calcul et l’export des résultats.
+    de la base de calcul, des paramètres avancés (fréquences, différé, flat, frais)
+    et l’export des résultats.
   </div>
 </div>
-""", unsafe_allow_html=True)
-
-
+""",
+        unsafe_allow_html=True,
+    )
 
     st.write("")
-    colA, colB, colC = st.columns(3, gap="large")
-    with colA:
-        amount = st.number_input("Montant du prêt", min_value=0.0, value=119_804.0, step=1_000.0)
-        annual_rate = st.number_input("Taux annuel (en %)", min_value=0.0, value=6.5, step=0.1) / 100.0
-        period_count = st.number_input("Durée (en périodes)", min_value=1, value=130, step=1)
 
-    with colB:
+    # ---- Ligne 1 : type de remboursement, montant , durée
+    l1a, l1b, l1c = st.columns(3, gap="large")
+    with l1a:
         repayment_type = st.selectbox(
-            "Type de remboursement",
-            [TYPE_IN_FINE, TYPE_CONSTANT_AMORTIZATION, TYPE_SPECIFIC_REPAYMENT],
+            "Type de calcul de l’échéance",
+            [TYPE_IN_FINE, TYPE_CONSTANT_AMORTIZATION, TYPE_ANNUITY],
             format_func=lambda x: {
                 TYPE_IN_FINE: "In fine",
                 TYPE_CONSTANT_AMORTIZATION: "Amortissement constant",
-                TYPE_SPECIFIC_REPAYMENT: "Remboursement spécifique (TEG)",
+                TYPE_ANNUITY: "Annuité constante",
             }[x],
         )
+    with l1b:
+        amount = st.number_input("Montant du prêt", min_value=0.0, value=119_804.0, step=1_000.0)
+    with l1c:
+        period_count = st.number_input("Durée (en mois)", min_value=1, value=130, step=1)
+
+    # ---- Ligne 2 : Fréquence de paiement, Fréquence d’intérêt, taux annuel
+    l2a, l2b, l2c = st.columns(3, gap="large")
+    with l2a:
         payment_freq = st.selectbox("Fréquence de paiement (en mois)", [1, 2, 3, 6, 12], index=0)
+    with l2b:
+        interest_freq = st.selectbox("Fréquence d’intérêt (mois)", [1, 2, 3, 6, 12], index=0)
+    with l2c:
+        annual_rate = st.number_input("Taux annuel (en %)", min_value=0.0, value=6.5, step=0.1) / 100.0
+
+    # ---- Ligne 3 : mode flat, base de calcul, date de déblocage
+    l3a, l3b, l3c = st.columns(3, gap="large")
+    with l3a:
+        flat = st.toggle("taux nominal", value=False)
+    with l3b:
         base = st.selectbox(
             "Base de calcul",
             [BASE_MENSUELLE_12, BASE_360],
-            format_func=lambda x: "Base 12 (mensuel)" if x == BASE_MENSUELLE_12 else "Base 360 (jours)",
+            format_func=lambda x: "Base 360/30 (mensuel)" if x == BASE_MENSUELLE_12 else "Base 365/30,25 (jours)",
         )
-
-    with colC:
+    with l3c:
         disb = st.date_input("Date de déblocage", value=date(2025, 4, 29))
+
+    # ---- Ligne 4 : Première échéance, Périodes de différé, frais
+    l4a, l4b, l4c = st.columns(3, gap="large")
+    with l4a:
         first = st.date_input("Première échéance", value=date(2025, 5, 29))
+    with l4b:
+        deferred = st.number_input("Périodes de différé", min_value=0, value=0, step=1)
+    with l4c:
+        fee = st.number_input("Frais", min_value=0.0, value=0.0, step=50.0)
 
-    st.write("")
-    if repayment_type == TYPE_SPECIFIC_REPAYMENT:
-        s1, s2, s3, s4 = st.columns(4)
-        with s1:
-            interest_freq = st.selectbox("Fréquence des intérêts (en mois)", [1, 2, 3, 6, 12], index=0)
-        with s2:
-            deferred = st.number_input("Nombre de périodes différées", min_value=0, value=0, step=1)
-        with s3:
-            flat = st.toggle("Mode flat", value=False)
-        with s4:
-            fee = st.number_input("Frais", min_value=0.0, value=200.0, step=10.0)
-    else:
-        interest_freq, deferred, flat, fee = 1, 0, False, 0.0
-
+    # Génération échéancier
     rows, summary = build_schedule(
         repayment_type=repayment_type,
         amount=float(amount),
         annual_rate=float(annual_rate),
         period_count=int(period_count),
         payment_frequency_months=int(payment_freq),
-        base=base,
-        disbursement_date=disb,
-        first_installment_date=first,
         interest_frequency_months=int(interest_freq),
         deferred_periods=int(deferred),
         flat=bool(flat),
         fee_amount=float(fee),
+        base=base,
+        disbursement_date=disb,
+        first_installment_date=first,
     )
 
     if not rows:
@@ -929,15 +957,14 @@ if section == "Cas pratique":
         k1.metric("Total versements", f"{summary.get('total_payment', 0):,.2f}")
         k2.metric("Total intérêts", f"{summary.get('total_interest', 0):,.2f}")
         k3.metric("Total principal", f"{summary.get('total_principal', 0):,.2f}")
-        if repayment_type == TYPE_SPECIFIC_REPAYMENT:
-            teg = summary.get("teg", float("nan"))
-            k4.metric("TEG (approx.)", "Non calculé" if teg != teg else f"{(teg * 100):.2f}%")
+        if repayment_type == TYPE_ANNUITY:
+            k4.metric("Annuité (paiement)", f"{summary.get('payment_const', 0):,.2f}")
         else:
-            k4.metric("Indicateur", "—")
+            k4.metric("taux nominal", "Oui" if flat else "Non")
 
         st.write("")
         st.markdown("### Échéancier (24 premières périodes)")
-        st.dataframe(df.head(24), use_container_width=True, hide_index=True)
+        st.dataframe(df.head(24), width="stretch", hide_index=True)
 
         csv_bytes = df.to_csv(index=False).encode("utf-8-sig")
         st.download_button(
@@ -964,7 +991,8 @@ if section == "Cas pratique":
             xaxis_title="Période",
             yaxis_title="Montant",
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
+
 
 
 # ============================
@@ -1068,7 +1096,8 @@ if section == "Compétences":
 )
 
 
-    col1, col2 = st.columns(2, gap="large")
+    col1, col2, col3 = st.columns(3, gap="large")
+
 
     # --- TECH ---
     with col1:
@@ -1130,6 +1159,37 @@ if section == "Compétences":
   </div>
 </div>
 """,
+            unsafe_allow_html=True,
+        )
+    # --- DEVOPS ---
+    with col3:
+        st.markdown(
+            """
+    <div class="skill-card">
+      <div class="skill-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M4 12a8 8 0 0116 0M8 12a4 4 0 018 0" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="16" r="2" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <div class="skill-title">DevOps & Observabilité</div>
+      </div>
+
+      <div class="skill-desc">
+        Automatisation du cycle de livraison, qualité logicielle
+        et supervision des applications conteneurisées.
+      </div>
+
+      <div class="skill-tags">
+        <div class="skill-tag">Docker</div>
+        <div class="skill-tag">Jenkins (CI/CD)</div>
+        <div class="skill-tag">SonarQube</div>
+        <div class="skill-tag">Prometheus</div>
+        <div class="skill-tag">Grafana</div>
+        <div class="skill-tag">Monitoring & Alerting</div>
+        <div class="skill-tag">Microservices</div>
+      </div>
+    </div>
+    """,
             unsafe_allow_html=True,
         )
 
