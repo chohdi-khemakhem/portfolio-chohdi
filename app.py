@@ -922,6 +922,7 @@ if section == "Cas pratique":
     with l4c:
         fee = st.number_input("Frais", min_value=0.0, value=0.0, step=50.0)
 
+    show_taeg = st.toggle("Calculer le TAEG (coût réel du crédit)", value=True)
     # Génération échéancier
     rows, summary = build_schedule(
         repayment_type=repayment_type,
@@ -957,10 +958,16 @@ if section == "Cas pratique":
         k1.metric("Total versements", f"{summary.get('total_payment', 0):,.2f}")
         k2.metric("Total intérêts", f"{summary.get('total_interest', 0):,.2f}")
         k3.metric("Total principal", f"{summary.get('total_principal', 0):,.2f}")
-        if repayment_type == TYPE_ANNUITY:
-            k4.metric("Annuité (paiement)", f"{summary.get('payment_const', 0):,.2f}")
+
+        if show_taeg:
+            taeg = summary.get("taeg", float("nan"))
+            k4.metric("TAEG", "—" if taeg != taeg else f"{taeg*100:.2f}%")
         else:
-            k4.metric("taux nominal", "Oui" if flat else "Non")
+            if repayment_type == TYPE_ANNUITY:
+                k4.metric("Annuité (paiement)", f"{summary.get('payment_const', 0):,.2f}")
+            else:
+                k4.metric("Mode Flat", "Oui" if flat else "Non")
+
 
         st.write("")
         st.markdown("### Échéancier (24 premières périodes)")

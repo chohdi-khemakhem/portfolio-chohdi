@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import date
 from math import pow
 from typing import List, Dict, Tuple
+from typing import Optional
 
 
 # ============================
@@ -45,6 +46,93 @@ def _add_months(d: date, months: int) -> date:
 def _days_between(d1: date, d2: date) -> int:
     return (d2 - d1).days
 
+def _npv_rate_with_dates(rate: float, cashflows: List[float], dates: List[date], day_basis: int) -> float:
+    """NPV(rate) with irregular dates: sum(CF_k / (1+rate)^(days_k/basis))."""
+    if rate <= -0.999999:
+        return float("inf")
+
+    d0 = dates[0]
+    total = 0.0
+    for cf, dk in zip(cashflows, dates):
+        days = (dk - d0).days
+        t = days / float(day_basis)
+        total += cf / pow(1.0 + rate, t)
+    return total
+
+
+def _irr_bisection_with_dates(
+    cashflows: List[float],
+    dates: List[date],
+    day_basis: int,
+    low: float = 0.0,
+    high: float = 5.0,
+    eps: float = 1e-7,
+    max_iter: int = 200,
+) -> float:
+    """
+    Find IRR such that NPV=0 using bisection.
+    Returns annual rate (since we use year fractions).
+    """
+    f_low = _npv_rate_with_dates(low, cashflows, dates, day_basis)
+    f_high = _npv_rate_with_dates(high, cashflows, dates, day_basis)
+
+    # Expand high if needed
+    tries = 0
+    while f_low * f_high > 0 and tries < 12:
+        high *= 2.0
+        f_high = _npv_rate_with_dates(high, cashflows, dates, day_basis)
+        tries += 1
+
+    if f_low * f_high > 0:
+        return float("nan")
+
+    a, b = low, high
+    fa, fb = f_low, f_high
+
+    for _ in range(max_iter):
+        c = (a + b) / 2.0
+        fc = _npv_rate_with_dates(c, cashflows, dates, day_basis)
+        if abs(fc) < eps or abs(b - a) < eps:
+            return c
+        if fa * fc <= 0:
+            b, fb = c, fc
+        else:
+            a, fa = c, fc
+
+    return (a + b) / 2.0
+
+
+def compute_taeg(
+    disbursement_date: date,
+    amount: float,
+    fee_amount: float,
+    rows: List["ScheduleRow"],
+    base: str,
+) -> float:
+    """
+    TAEG (annual IRR) from:
+      CF0 = + (amount - fee)
+      CFk = - payment at each schedule row date where payment > 0
+    day_basis: 365 for BASE_12, 360 for BASE_360 (convention bancaire)
+    """
+    if amount <= 0:
+        return float("nan")
+
+    day_basis = 360 if base == BASE_360 else 365
+
+    cashflows = [float(amount - fee_amount)]
+    dates = [disbursement_date]
+
+    for r in rows:
+        if r.payment and r.payment > 0:
+            cashflows.append(-float(r.payment))
+            dates.append(r.date)
+
+    # Need at least one outflow
+    if len(cashflows) < 2:
+        return float("nan")
+
+    return _irr_bisection_with_dates(cashflows, dates, day_basis=day_basis)
 
 # ============================
 # RATES + INTEREST
@@ -233,6 +321,7 @@ def _schedule_in_fine(
         "total_principal": total_principal,
         "fee_amount": fee_amount,
     }
+    summary["taeg"] = compute_taeg(disb, amount, fee_amount, rows, base)
     return rows, summary
 
 
@@ -330,6 +419,7 @@ def _schedule_constant_amortization(
         "total_principal": total_principal,
         "fee_amount": fee_amount,
     }
+    summary["taeg"] = compute_taeg(disb, amount, fee_amount, rows, base)
     return rows, summary
 
 
@@ -456,6 +546,7 @@ def _schedule_annuity(
         "payment_frequency_months": float(payment_freq_m),
         "deferred_periods": float_toggle(deferred_periods),
     }
+    summary["taeg"] = compute_taeg(disb, amount, fee_amount, rows, base)
     return rows, summary
 
 
